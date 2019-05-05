@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Middlesex County New Jersey Webmap</title>
+        <title>Invite to a Picnic!</title>
         
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
@@ -59,7 +59,14 @@
         
         h1 {
             text-align: center;
+            color: #228B22;
         }
+        
+        h2{
+        text-align: center;
+            color: #7851a9;
+        }
+        
         header {
             padding: 6px 10%;
         }
@@ -99,7 +106,8 @@
     <body>
         
     <header>
-        <h1>Click on the map to see the location and time of the picnic!</h1>
+        <h1> Left Click on the Map to Reveal the Location and Date of the Picnic<br></h1>
+         <h2> Right Click on the Map to Zoom in on the Location of the Picnic </h2>
     </header>
         
     <div class="topHeader" id="mapHeader" onclick="viewSet()">
@@ -221,7 +229,7 @@
 
 
             var icon = L.icon({
-    iconUrl: 'a.png',
+    iconUrl: 'bg-coop2.github.io/Invite/a.png',
     iconSize:     [25, 25], // size of the icon   
 });
             
