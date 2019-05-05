@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Middlesex County New Jersey Webmap</title>
+        
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+ <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+   integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+   crossorigin=""></script>
+        
+    <link rel="stylesheet" href="src\leaflet-overview.css" />
+    <script src="src\leaflet-overview.js"></script>
+        <script src="src\railStaVil.js"></script>        
+        <script src="src\railPassMiddle.js"></script>
+        <script src="src\middleMuns.js"></script>
+        
+    <style>
+        html, body, #map {
+            width: 90%;
+            height: 95%;
+            margin: 10px auto;
+            background-color: gainsboro; }
+        #map {
+            z-index: 5;
+        }
+        #mapHeader {
+            position:absolute;
+            height: auto;
+            width: auto;
+            padding-bottom: 10px;
+            padding-top: 21px;
+            padding-left: 150px;
+            padding-right: 5px;
+            z-index: 10; }
+        #nav {
+            width: 100%;
+            float: left;
+            margin: 0 0 3em 0;
+            padding: 0;
+            list-style: none;
+            background-color: #fff;
+            border-bottom: 1px solid #ccc; 
+            border-top: 1px solid #ccc; }
+        #nav li {
+            float: left; }
+        #nav li a {
+            display: block;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #069;
+            font-size: 1.3em;
+            border-right: 1px solid #fff; }
+        #nav li a:hover {
+	   	   color: #1A2739;
+	   	   background-color: #B8DBF2; }
+        
+        h1 {
+            text-align: center;
+        }
+        header {
+            padding: 6px 10%;
+        }
+        footer {
+            padding: 6px 10%;
+            width: 80%;
+        }
+        p {
+            font-size: 1em;
+            color: #001323;
+            text-align: justify;
+        }
+        .positive {
+            color: green;
+        }
+        .negative {
+            color: red;
+        }
+        .same {
+            color: tan
+        }
+        posi {
+            color: green;
+        }
+        neg {
+            color: red;
+        }
+        tranvil {
+            color:blue;
+        }
+        novil {
+            color: yellow;
+        }
+        </style>
+    </head>
+
+    <body>
+        
+    <header>
+        <h1>Click on the map to see the location and time of the picnic!</h1>
+    </header>
+        
+    <div class="topHeader" id="mapHeader" onclick="viewSet()">
+        <ul id="nav">
+            <li><a href="#">Explore the World</a></li>
+        </ul>
+    </div>
+        
+
+        
+        <div id="map"></div>
+
+    <footer>
+        
+        <h2>How to read the web map</h2>
+        <p>
+        <p>
+    
+    </footer>
+
+    
+        <script>
+    
+    function viewSet() {
+        map.setView([0,0]),
+        map.setZoom(1)
+    }
+            
+// Base layers
+    var hyddaBase = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+		
+    }),
+    esriWM = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        
+    });
+
+    function style(feature)  {
+        if (feature.properties.COUNTY == 'MIDDLESEX' && feature.properties.TRANSIT_VL == 'Y') {
+            return ({
+                radius: 8,
+                fillColor: '#3498DB',
+                color: "#D0D3D4",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            });
+        }
+        else {return ({
+            radius: 8,
+            fillColor: "#F4D03F",
+            color: "#D0D3D4",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+            });
+        }
+    };
+            
+    var railStaVil = L.geoJSON(railStaVil, {
+            pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng,style(feature))
+    },
+        filter: function(feature, layer) {
+            console.log(feature.properties)
+            if(feature.properties.COUNTY == 'MIDDLESEX'){
+                return feature;
+            }
+        },    
+        onEachFeature : function(feature, layer) {
+//            console.log(layer)
+            layer.on('mouseover',function(){
+                layer.setStyle({
+                    fillColor: '#E67E22'
+                }),
+            layer.bindPopup("<b>Station Name: </b>"+feature.properties.STATION+"<br><b>Rail Line: </b>"+feature.properties.LINE+"<br><b>Amtrak Service: </b>"+feature.properties.AMTRAK+"<br><b>Transit Village Station: </b>"+feature.properties.TRANSIT_VL)
+            });
+            
+            layer.on('mouseout', function(){
+                layer.bindPopup().closePopup(),
+                railStaVil.setStyle(style);
+                });      
+        }
+    });
+
+    var railPassMiddle = L.geoJSON(railPassMiddle, {
+            style: styleRail,
+            onEachFeature: rail        
+    }),
+        middleMuns = L.geoJSON(middleMuns, {
+            style: styleMun,
+            onEachFeature: muns        
+    });
+
+// Initialize the map with our default layer
+    var map = L.map('map', {
+        center: [0,0],
+        zoom:   1,
+        layers: [esriWM, hyddaBase]
+    });
+
+    var baseMaps = {
+        'Esri World Map': esriWM,
+        'Open Street Map': hyddaBase
+    };
+
+    L.control.scale({
+        position: 'bottomleft',
+        imperial: true,
+        metric: true
+    }).addTo(map);
+
+// Add base layers for the overview map
+    var hyddaBase_Inset = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+		  
+    }),
+        esriWMInset =   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            
+    });
+
+
+            var icon = L.icon({
+    iconUrl: 'a.png',
+    iconSize:     [25, 25], // size of the icon   
+});
+            
+map.on('click', function(e) {
+    L.marker([40.2624475,-75.4597487], {icon: icon}).bindPopup(' <b>Invitation:</b> <a href="https://www.youtube.com/watch?v=7s6VbOEnsgk">For a Lovely Day</a><br/> <b>Location: </b> <a href="https://www.google.com/maps/place/Evansburg+State+Park/@40.2006789,-75.4062092,17z/data=!3m1!4b1!4m5!3m4!1s0x89c699deca59e741:0xab6359ed513da97c!8m2!3d40.2006789!4d-75.4040205">Evansburg State Park</a><br/> <b>Date</b>: Saturday May 11th at 12pm<br/><a href="https://weather.com/weather/tenday/l/Evansburg+State+Park+4196:19:US">Why Saturday is the Best Day to Go!</a>').addTo(map).openPopup()
+    
+} );   
+            
+            
+map.on('contextmenu', function (e){
+        map.setView([40.2624475,-75.4597487], 12)})
+
+            
+// Legend controls      
+    var x
+
+    L.control.layers(baseMaps, x, {collapsed: false}).addTo(map);
+            
+    map.on("overlayadd", function (event) {
+        railPassMiddle.bringToFront();
+        railStaVil.bringToFront();
+    });
+
+// Overview map control
+    L.control.overview([hyddaBase_Inset, esriWMInset]).addTo(map);
+
+
+//GeoSJON action
+    function styleMun(feature) {
+        return {
+            weight: 2,
+            opacity: 1,
+            color: '#F5CBA7',
+            dashArray: '4',
+            fillColor: '#797D7F',
+            fillOpacity: 0.7,
+            };
+    }
+
+    function styleRail(feature) {
+        return {
+            weight: 4,
+            color: '#000000',
+            dashArray: '5',
+            };
+    };
+
+    function muns (feature, layer) {
+//        console.log(feature.properties.POP2000)
+        var popDiff = (feature.properties.POP2010 - feature.properties.POP2000);
+//        console.log(popDiff)
+        if (popDiff > 0) {
+            var updateCol = 'green',
+                colorClass = 'positive';
+            }
+            else if (popDiff < 0){
+                var updateCol = 'red',
+                    colorClass = 'negative';
+                }
+                else {
+                    var updateCol = 'tan',
+                        colorClass = 'same';
+                }
+        console.log(colorClass)
+//        console.log(updateCol)
+        
+        layer.on('mouseover', function (e) {
+            this.setStyle({
+            weight: 5,
+            color: '#F5CBA7',
+            fillColor: updateCol,
+            fillOpacity: 0.7
+        }),
+        layer.bindPopup("<div class ="+colorClass+"><b>"+feature.properties.NAME+"</b></div></b><br>2010 Population: "+feature.properties.POP2010.toLocaleString()+"<br>2000 Population: "+feature.properties.POP2000.toLocaleString()+"<br>Population Change: "+popDiff.toLocaleString()).openPopup;
+            });  
+
+        layer.on('mouseout', function (e) {
+            layer.bindPopup().closePopup(),
+            middleMuns.resetStyle(e.target);
+        });
+    };
+            
+    function rail (feature, layer) {
+        console.log(layer)
+        
+        layer.on('mouseover', function (e) {
+            this.setStyle({
+            weight: 4,
+            color: '#FFFFFF',
+            fillOpacity: 0.7
+        }),
+        layer.bindPopup("<b>"+feature.properties.RAIL_LINE+"</b>").openPopup;
+            });  
+
+        layer.on('mouseout', function (e) {
+            layer.bindPopup().closePopup(),
+            railPassMiddle.resetStyle(e.target);
+        });
+    };
+
+
+
+        </script>
+    </body>
+</html>
