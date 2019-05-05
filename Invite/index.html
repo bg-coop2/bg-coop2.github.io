@@ -106,8 +106,8 @@
     <body>
         
     <header>
-        <h1> Left Click on the Map to Reveal the Location and Date of the Picnic<br></h1>
-         <h2> Right Click on the Map to Zoom in on the Location of the Picnic </h2>
+        <h1> Touch the Map to Reveal the Location and Date of the Picnic<br></h1>
+         <h2> Click on the Other Markers For Location </h2>
     </header>
         
     <div class="topHeader" id="mapHeader" onclick="viewSet()">
@@ -230,17 +230,20 @@
 
    
             
-//
+
             
 map.on('click', function(e) {
     L.marker([40.2624475,-75.4597487]).bindPopup(' <b>Invitation:</b> <a href="https://www.youtube.com/watch?v=7s6VbOEnsgk">For a Lovely Day</a><br/> <b>Location: </b> <a href="https://www.google.com/maps/place/Evansburg+State+Park/@40.2006789,-75.4062092,17z/data=!3m1!4b1!4m5!3m4!1s0x89c699deca59e741:0xab6359ed513da97c!8m2!3d40.2006789!4d-75.4040205">Evansburg State Park</a><br/> <b>Date</b>: Saturday May 11th at 12pm<br/><a href="https://weather.com/weather/tenday/l/Evansburg+State+Park+4196:19:US">Why Saturday is the Best Day to Go!</a>').addTo(map).openPopup()
-    
+     map.setView([40.2624475,-75.4597487], 9)
+    L.marker([39.9675506, -75.1464372]).bindPopup('<b>Philly</b>').addTo(map)
+    L.marker([40.61990, -75.382625]).bindPopup('<b>Bethlehem</b>').addTo(map)
 } );   
             
             
-map.on('contextmenu', function (e){
-        map.setView([40.2624475,-75.4597487], 15)})
 
+
+
+            
             
 // Legend controls      
     var x
